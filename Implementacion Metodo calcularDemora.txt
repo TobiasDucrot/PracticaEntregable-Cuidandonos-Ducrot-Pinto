@@ -1,0 +1,60 @@
+public class Viaje {
+    // Acá estarían todos los atributos y métodos de la clase Viaje...
+
+    private AdaptadorDistanciaAPI adaptador;
+    public List<Double> listaTiempoEntreParadas = new ArrayList<>();
+
+    public Double calcularDemora() {
+        // Si el transeunte decide detenerse en cada parada
+        if (this.seDetieneEnCadaParada()) {
+            // Recoro la lista de paradas
+            for (int i = 0; i < paradas.size() - 1; i++) {
+                // Obtengo la actual
+                Parada paradaActual = this.paradas.get(i);
+                // Obtengo la siguiente a la actual
+                Parada siguienteParada = this.paradas.get(i + 1);
+                // Adapto la distancia que me va a devolver la API entre esas 2 paradas
+                Double distancia = this.adaptador.adaptarDistancia(paradaActual, siguienteParada);
+                // Calculo el tiempo entre esas 2 paradas (el tiempo que tarda en recorrer distancia)
+                Double tiempoEntreParadas = calcularTiempo(distancia);
+                // Agrego esa distancia a la lista
+                listaTiempoEntreParadas.add(tiempoEntreParadas);
+            }
+            return listaTiempoEntreParadas;
+        } else {
+            // Si no se detiene tengo que calcular la demora total entre paradas
+            // Obtengo la primera parada
+            Parada primeraParada = this.paradas.get(0);
+            // Obtengo la ultima parada
+            Parada ultimaParada = this.paradas.get(paradas.size() - 1);
+            // Adapto la distancia que me devuelve la API entre esas 2 paradas
+            Double distanciaTotal = this.adaptador.adaptarDistancia(primeraParada, ultimaParada);
+            // Calculo el tiempo de esa distancia
+            Double demoraTotal = calcularTiempo(distanciaTotal);
+            return Collections.singletonList(demoraTotal);
+        }
+    }
+
+    public Double calcularTiempo(Double distancia) {
+        // Implementación de cálculo de tiempo,donde se utilizaría una velocidad promedio para calcular el tiempo
+        // en minutos que se tardaría en recorrer una distancia
+    }
+}
+
+class AdaptadorDistanciaAPI implements AdaptadorDistancia {
+    private DistanceMatrix api;
+    public Double adaptarDistancia(Parada origen, Parada destino) {
+        // Obtengo la distancia que me devuelve la API
+        Integer distancia = this.api.calcularDistancia(origen, destino);
+        // Acá iría la implementación de cómo adaptaría la respuesta de la API, en función de lo que necesite
+        return distancia;
+    }
+}
+
+public interface AdaptadorDistancia {
+    public Double adaptarDistancia(Parada origen, Parada destino);
+}
+
+public interface DistanceMatrixAPI {
+    public Integer calcularDistancia(Parada origen, Parada destino);
+}
